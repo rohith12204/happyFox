@@ -7,7 +7,7 @@
           <li>PROFILE</li>
           <li>CONNECT ME</li>
           <li>SETTINGS</li>
-          <li>ABOUT </li>
+          <li>ABOUT US</li>
           <li>CONTACT US</li>
         </ul>
       </div>
@@ -47,16 +47,40 @@
         <div class="play-button">▶</div>
         <div class="hero-title">Here</div>
         <p class="hero-subtext">
-          Three friends confront the grieving process through shared rituals and memories made among nature
+          A community of curious minds, discovering truth and purpose through learning, legacy, and the wild spirit of nature.
         </p>
       </div>
     </div>
+
+    <!-- Chat Prompt Area -->
+    <div class="chat-prompt" @click="openChat">
+      <p class="prompt-text">Hey {{ firstName }}, how was your week?</p>
+      <textarea placeholder="Type your thoughts..." readonly></textarea>
+    </div>
+
+    <!-- Chatbot Overlay -->
+    <transition name="chat-slide">
+      <div v-if="showChat" class="chatbot-overlay">
+        <div class="chat-header">
+          <button class="close-chat" @click="closeChat">← Back</button>
+          <span class="chat-title">Fox Chat</span>
+        </div>
+        <div class="chat-body">
+          <div class="message bot">Hi {{ firstName }}! I'm here to listen 😊</div>
+        </div>
+        <div class="chat-footer">
+          <input type="text" placeholder="Type a message..." />
+          <button>Send</button>
+        </div>
+      </div>
+    </transition>
 
     <SignedOut>
       <p>You are not signed in. Redirecting to login...</p>
     </SignedOut>
   </div>
 </template>
+
 
 <script setup>
 import { SignedIn, SignedOut, useUser, useClerk } from '@clerk/vue';
@@ -85,6 +109,20 @@ const logout = async () => {
   await clerk.value.signOut();
   router.push('/');
 };
+
+const chatInput = ref('');
+
+const handleChatSend = () => {
+  if (chatInput.value.trim()) {
+    console.log(`User said: ${chatInput.value}`);
+    chatInput.value = '';
+  }
+};
+
+const showChat = ref(false);
+const openChat = () => (showChat.value = true);
+const closeChat = () => (showChat.value = false);
+
 </script>
 
 <style scoped>
@@ -198,7 +236,7 @@ const logout = async () => {
 }
 
 .university-logo {
-  height: 64px;
+  height: 70px;
   transform: translateY(6px);
 }
 
@@ -363,4 +401,200 @@ const logout = async () => {
     margin-bottom: 0.5rem;
   }
 }
+/* --- CHATBOT SECTION --- */
+.chatbot-container {
+  padding: 2rem;
+  background-color: #ffffff;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.chatbot-greeting {
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.chatbox {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chat-input {
+  width: 100%;
+  height: 120px;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  resize: none;
+  font-family: 'Poppins', sans-serif;
+}
+
+.send-button {
+  align-self: flex-end;
+  padding: 0.6rem 1.2rem;
+  background-color: #000;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.send-button:hover {
+  background-color: #333;
+}
+
+/* Chat Prompt Style */
+.chat-prompt {
+  width: 40%;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.chat-prompt:hover {
+  transform: scale(1.02);
+  background: #f1f5f9;
+}
+
+.prompt-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.chat-prompt textarea {
+  width: 100%;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 0.7rem;
+  font-size: 1rem;
+  resize: none;
+  pointer-events: none;
+}
+
+/* Chatbot Overlay Style */
+.chatbot-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fefefe;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  padding: 1rem;
+  background: #000;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.close-chat {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.chat-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.chat-body {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.message {
+  padding: 0.8rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 12px;
+  max-width: 70%;
+}
+
+.bot {
+  background: #e0f2fe;
+  align-self: flex-start;
+}
+
+/* Chat Input Area */
+.chat-footer {
+  display: flex;
+  padding: 1rem;
+  gap: 0.5rem;
+  border-top: 1px solid #ddd;
+}
+
+.chat-footer input {
+  flex-grow: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.chat-footer button {
+  padding: 0.7rem 1rem;
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Slide Transition */
+.chat-slide-enter-from {
+  transform: translateX(100%);
+}
+.chat-slide-enter-to {
+  transform: translateX(0);
+}
+.chat-slide-leave-from {
+  transform: translateX(0);
+}
+.chat-slide-leave-to {
+  transform: translateX(100%);
+}
+.chat-slide-enter-active,
+.chat-slide-leave-active {
+  transition: transform 0.4s ease;
+}
+
+@media (max-width: 768px) {
+  .chat-prompt {
+    width: 90%;
+  }
+
+  .chatbot-overlay {
+    padding-top: 0;
+  }
+
+  .chat-footer input {
+    font-size: 0.9rem;
+  }
+}
+
 </style>
